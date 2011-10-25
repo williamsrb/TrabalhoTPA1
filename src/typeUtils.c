@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "typeUtils.h"
 #include "stringUtils.h"
-
 #include <stdio.h>
 
 //Verifica se a string é convertível para int
@@ -146,6 +145,19 @@ int bitCounter(unsigned int integer) {
 		} while(comparer <= integer);
 	}
 	return counter;
+}
+
+void printArray(int arr[], int sz) {
+	int i;
+	if((arr != NULL) || (sz < 1)) {
+		printf("Vetor:\n%d", arr[0]);
+		for(i = 1; i < sz; i++) {
+			printf(", %d", arr[i]);
+		}
+		printf("\n");
+	} else {
+		printf("Erro imprimindo array\n");
+	}
 }
 
 //Preenche um vetor de 'algoCount' vetores, de um tipo definido por parâmetro, com itens de uma lista concatenada com vírgulas

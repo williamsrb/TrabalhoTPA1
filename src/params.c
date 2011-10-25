@@ -89,7 +89,7 @@ OBS.: Square and round brackets are unnecessary
 64 --gnuplotOutputFile=[full_path_to_file] -- If file is not writable, redirects output to stdout and send error message to stderr.
 128 --extraReportFile=[full_path_to_file] – Data that is not 'gnuplotable', but can be usefull.
 256 --useArrays=[true|false] – Uses arrays instead of linked lists.
-512 --useThreads=[true|false] - Each algoritm runs in a separeted thread.
+512 --parallelRun=[true|false] - Each algoritm runs in a separeted thread.
 1024 --values=[comma_separated_values_list] -- Accept the same type specified in 'algo'.
 */
 

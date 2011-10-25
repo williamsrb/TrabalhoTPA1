@@ -21,7 +21,7 @@
 //
 
 //http://www.algorithmist.com/index.php/Bubble_sort.c
-bool bubbleSort(int numbers[], int array_size) {
+bool bubbleSort_int(int numbers[], int array_size) {
 	int i, j, temp;
 	bool success;
 	if(numbers != NULL && array_size > 0) {
@@ -41,19 +41,17 @@ bool bubbleSort(int numbers[], int array_size) {
 	return success;
 }
 
-void *bubbleThread(void *arg) {
+void *bubbleThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("bubblesort iniciado\n");
-	if(bubbleSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(bubbleSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("bubblesort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -70,7 +68,7 @@ void *bubbleThread(void *arg) {
 //
 
 //http://pt.wikipedia.org/wiki/Insertion_sort#C
-bool insertionSort(int v[], int n) {
+bool insertionSort_int(int v[], int n) {
 	int i, j, chave;
 	bool success;
 	if(v != NULL && n > 0) {
@@ -90,19 +88,17 @@ bool insertionSort(int v[], int n) {
 	return success;
 }
 
-void *insertionThread(void *arg) {
+void *insertionThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("insertionsort iniciado\n");
-	if(insertionSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(insertionSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("insertionsort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -119,7 +115,7 @@ void *insertionThread(void *arg) {
 //
 
 //http://pt.wikipedia.org/wiki/Selection_sort#C
-bool selectionSort(int num[], int tam) {
+bool selectionSort_int(int num[], int tam) {
 	int i, j, min;
 	bool success;
 	if(num != NULL && tam > 0) {
@@ -143,19 +139,17 @@ bool selectionSort(int num[], int tam) {
 	return success;
 }
 
-void *selectionThread(void *arg) {
+void *selectionThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("electionsort iniciado\n");
-	if(selectionSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(selectionSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("selectionsort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -175,14 +169,14 @@ void *selectionThread(void *arg) {
 
 //http://www.cprogramming.com/tutorial/computersciencetheory/merge.html
 /* Helper function for finding the min of two numbers */
-inline int min(int a, int b)
+inline int min_int(int a, int b)
 {
   return (a < b) ? a : b;
 }
 
 /* left is the index of the leftmost element of the subarray; right is one
  * past the index of the rightmost element */
-void mergeHelper(int *input, int left, int right, int *scratch)
+void mergeHelper_int(int *input, int left, int right, int *scratch)
 {
     /* base case: one element */
     if(right == left + 1) {
@@ -195,8 +189,8 @@ void mergeHelper(int *input, int left, int right, int *scratch)
         int l = left, r = left + midpoint_distance;
 
         /* sort each subarray */
-        mergeHelper(input, left, left + midpoint_distance, scratch);
-        mergeHelper(input, left + midpoint_distance, right, scratch);
+        mergeHelper_int(input, left, left + midpoint_distance, scratch);
+        mergeHelper_int(input, left + midpoint_distance, right, scratch);
 
         /* merge the arrays together using scratch for temporary storage */ 
         for(i = 0; i < length; i++)
@@ -206,7 +200,7 @@ void mergeHelper(int *input, int left, int right, int *scratch)
              * so, we compare them.  Otherwise, we know that the merge must
              * use take the element from the left array */
             if(l < left + midpoint_distance && 
-                    (r == right || min(input[l], input[r]) == input[l]))
+                    (r == right || min_int(input[l], input[r]) == input[l]))
             {
                 scratch[i] = input[l];
                 l++;
@@ -231,11 +225,11 @@ void mergeHelper(int *input, int left, int right, int *scratch)
  *
  * Elements are sorted in reverse order -- greatest to least */
 
-bool mergeSort(int *input, int size) {
+bool mergeSort_int(int *input, int size) {
 	bool success;
     int *scratch = (int *)malloc(size * sizeof(int));
     if(scratch != NULL && size > 0) {
-        mergeHelper(input, 0, size, scratch);
+        mergeHelper_int(input, 0, size, scratch);
         free(scratch);
         success = true;
     } else {
@@ -244,19 +238,17 @@ bool mergeSort(int *input, int size) {
     return success;
 }
 
-void *mergeThread(void *arg) {
+void *mergeThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("mergesort iniciado\n");
 	//Inicio
-	if(mergeSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(mergeSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("mergesort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -275,7 +267,7 @@ void *mergeThread(void *arg) {
 //
 
 //http://www.algorithmist.com/index.php/Heap_sort.c
-void siftDown(int numbers[], int root, int bottom) {
+void siftDown_int(int numbers[], int root, int bottom) {
 	int done, maxChild, temp;
 
 	done = 0;
@@ -298,18 +290,18 @@ void siftDown(int numbers[], int root, int bottom) {
 	}
 }
 
-bool heapSort(int numbers[], int array_size) {
+bool heapSort_int(int numbers[], int array_size) {
 	int i, temp;
 	bool success;
 	if(numbers != NULL && array_size > 0) {
 		for(i = (array_size / 2); i >= 0; i--)
-			siftDown(numbers, i, array_size - 1);
+			siftDown_int(numbers, i, array_size - 1);
 
 		for(i = array_size-1; i >= 1; i--) {
 			temp = numbers[0];
 			numbers[0] = numbers[i];
 			numbers[i] = temp;
-			siftDown(numbers, 0, i-1);
+			siftDown_int(numbers, 0, i-1);
 		}
 		success = true;
 	} else {
@@ -318,19 +310,17 @@ bool heapSort(int numbers[], int array_size) {
 	return success;
 }
 
-void *heapThread(void *arg) {
+void *heapThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("heapsort iniciado\n");
-	if(heapSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(heapSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("heapsort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -348,7 +338,7 @@ void *heapThread(void *arg) {
 //
 
 //http://www.algorithmist.com/index.php/Quicksort.c 
-void quickSortWorker(int *data, int N) {
+void quickSortWorker_int(int *data, int N) {
 	int i, j;
 	int v, t;
 
@@ -371,14 +361,14 @@ void quickSortWorker(int *data, int N) {
 	t = data[i-1];
 	data[i-1] = data[0];
 	data[0] = t;
-	quickSortWorker(data, i-1);
-	quickSortWorker(data+i, N-i);
+	quickSortWorker_int(data, i-1);
+	quickSortWorker_int(data+i, N-i);
 }
 
-bool quickSort(int *data, int n) {
+bool quickSort_int(int *data, int n) {
 	bool success;
 	if(data != NULL && n > 0) {
-		quickSortWorker(data, n);
+		quickSortWorker_int(data, n);
 		success = true;
 	} else {
 		success = false;
@@ -386,19 +376,17 @@ bool quickSort(int *data, int n) {
 	return success;
 }
 
-void *quickThread(void *arg) {
+void *quickThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("quicksort iniciado\n");
-	if(quickSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(quickSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("quicksort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -415,8 +403,8 @@ void *quickThread(void *arg) {
 //
 
 //http://en.literateprograms.org/Special:Downloadcode/Radix_sort_%28C%29
-//void radixSort_uint(unsigned int *a, size_t size, int bits) {
-bool radixSort(unsigned int *a, size_t size) {
+//void radixSort_int_uint(unsigned int *a, size_t size, int bits) {
+bool radixSort_int(unsigned int *a, size_t size) {
 	int bits = 4;
 	unsigned int mask;
 	unsigned int rshift=0u;
@@ -429,6 +417,7 @@ bool radixSort(unsigned int *a, size_t size) {
 	if(a != NULL && size > 0) {
 		b=b_orig=malloc(size*sizeof(unsigned int));
 		cntsize=1u<<bits;
+		printf("cntsize: %d\n", cntsize);
 		cntarray=calloc(cntsize, sizeof(int));
 		assert(cntarray);
 		assert(b_orig);
@@ -456,19 +445,17 @@ bool radixSort(unsigned int *a, size_t size) {
 	return success;
 }
 
-void *radixThread(void *arg) {
+void *radixThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("radixsort iniciado\n");
 	//Inicio
-	if(radixSort(*((unsigned int **)getSortingDataArray(info)), (size_t)(getSortingSize(info))) == false) {
+	if(radixSort_int(*((unsigned int **)getSortingDataArray(info)), (size_t)(getSortingSize(info))) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("radixsort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
@@ -485,7 +472,7 @@ void *radixThread(void *arg) {
 //
 
 //http://en.literateprograms.org/Special:Downloadcode/Bucket_sort_%28C%29
-bool bucketSort(int array[], int n) {
+bool bucketSort_int(int array[], int n) {
 	int i, j;
 	bool success;
 	if(array != NULL && n > 0) {
@@ -511,19 +498,17 @@ bool bucketSort(int array[], int n) {
 	return success;
 }
 
-void *bucketThread(void *arg) {
+void *bucketThread_int(void *arg) {
 	/* */ SortingInfo info = (SortingInfo)arg;
-	/* */ uint64_t start, end;
+	/* */ uint32_t start, end;
 	/* */ start = *(getSortingClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	//printf("bucketsort iniciado\n");
 	//Inicio
-	if(bucketSort(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(bucketSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	//printf("bucketsort finalizado\n");
 	/* */ end = *(getSortingClock(info));
 	/* */ *(getSortingTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);

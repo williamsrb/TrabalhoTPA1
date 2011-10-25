@@ -16,11 +16,13 @@ typedef struct run_data *t_run_data;
 #define INVALID true //Relevante p/ paramsCheckConflitcts
 #define OK false //Relevante p/ paramsFetch e paramsFileFetch
 #define ERROR true //Relevante p/ paramsFetch e paramsFileFetch
+//AVISO: 2.147.483.647 corresponde a INT_MAX. Não ultrapasse 2.147.483.647/100 se você não tiver pelo menos 2GB de memória.
 #define CONFIG_QUOTA 65536 //ESTE É O LIMITE DE TAMANHO DA MASSA DE DADOS, não é tamanho padrão, é apenas um limite p/ o usuário
 #define CONFIG_SLEEPLIMIT 5*60 //5 minutos é demais, não acha? Não é tempo padrão, é apenas um limite p/ o usuário
 
 //Valores default dos parâmetros
-#define ALGOIDENTIFIER 1+2+4+8+16+32 //Todos exceto radix e bucket
+//AVISO: Para quantidades grandes jamais use o Bubble. Para quantidades perto de INT_MAX não use algoritmos recursivos ou que usam espaços extras para ordenação(radix e bucket)
+#define ALGOIDENTIFIER 1+2+4+8+16+32+128 //Todos exceto radix
 #define ALGOTYPE 1 //Inteiro
 #define ABORTTIME 30 //em segundos
 #define ORDERBEFORE 0 //deixando 0 ele não pré-ordena
@@ -32,7 +34,8 @@ typedef struct run_data *t_run_data;
 #define GNUPLOTOUTPUTFILE ("gnuplot_report.dat") //gerará automaticamente este arquivo ou sobreescreve-lo-á, caso exista, a não ser que o usuário informe outro caminho
 #define EXTRAREPORTFILE ("report.txt") //gerará automaticamente este arquivo ou sobreescreve-lo-á, caso exista, a não ser que o usuário informe outro caminho
 #define USEARRAYS false //não usar arrays é o mesmo que habilitar relatórios avançados, uma vez que acessando através de funções é mais fácil acompanhar as operações
-#define USETHREADS true //quis usar threads para não perder tempo, ocupando o máximo possível o processador
+//AVISO: Para garantir que nenhuma thread seja "assassinada" use o bom senso ao combinar essa propriedade com o tamanho da massa de dados
+#define PARALLELRUN true //quis usar threads para não perder tempo, ocupando o máximo possível o processador
 #define VALUES ("5,3,2,8,9,7,1,6,4,10") //Precisa ser do mesmo tipo que ALGOTYPE, e só é usado se ambos não forem informados pelo usuário
 
 //Domínio do analista - Fim

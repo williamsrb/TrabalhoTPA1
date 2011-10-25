@@ -1,6 +1,7 @@
 #ifndef _ALGORITHMS_H
 #define _ALGORITHMS_H
 
+#include <stdbool.h>
 #include <stddef.h>
 bool bubbleSort(int numbers[], int array_size);
 void *bubbleThread(void *arg);
@@ -21,9 +22,9 @@ bool quickSort(int *data, int N);
 void *quickThread(void *arg);
 
 //void radixSort_uint(unsigned int *a, size_t size, int bits);
-void radixSort(unsigned int *a, size_t size);
+bool radixSort(unsigned int *a, size_t size);
 void *radixThread(void *arg);
 
-void bucketSort(int array[], int n);
+bool bucketSort(int array[], int n);
 void *bucketThread(void *arg);
 #endif

@@ -28,7 +28,7 @@ struct run_data {
 	char *extraReportFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
 	
 	bool useArrays;
-	bool useThreads;
+	bool parallelRun;
 	
 	char *values; //Comma-separated values - For memory optimization purposes, will contain pointer to 'argv' relevant part
 	int *valuesPointers[8]; //A int type array for each algorithm - Will be filled and used depending on algoType and useArrays
@@ -55,7 +55,7 @@ void initRunData(struct run_data *mainData) {
 	mainData->extraReportFile = NULL;
 	
 	mainData->useArrays = false;
-	mainData->useThreads = false;
+	mainData->parallelRun = false;
 	
 	mainData->values = NULL;
 	while(i < 8) {
@@ -137,11 +137,11 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 			mainData->useArrays = USEARRAYS;
 		}
 		
-		if(paramIsset(mainParams, /* Id: */ 512)) { //Id:512 , Param:--useThreads=
+		if(paramIsset(mainParams, /* Id: */ 512)) { //Id:512 , Param:--parallelRun=
 			pData = paramGetData(mainParams, 9); //Este número(9) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
-			mainData->useThreads = paramsSwitchCase(mainParams, /* Id: */ 512, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
+			mainData->parallelRun = paramsSwitchCase(mainParams, /* Id: */ 512, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
 		} else { //Então use o valor padrão
-			mainData->useThreads = USETHREADS;
+			mainData->parallelRun = PARALLELRUN;
 		}
 		
 		if(paramIsset(mainParams, /* Id: */ 1024)) { //Id:1024 , Param:--values=
@@ -258,7 +258,7 @@ char* runGetExtraReportFile(t_run_data mainData) {	return mainData->extraReportF
 bool runGetUseArrays(t_run_data mainData) {	return mainData->useArrays;}
 
 //Public
-bool runGetUseThreads(t_run_data mainData) {	return mainData->useThreads;}
+bool runGetUseThreads(t_run_data mainData) {	return mainData->parallelRun;}
 
 //Public
 char* runGetValues(t_run_data mainData) {	return mainData->values;}
@@ -284,43 +284,37 @@ int main(void) {
 	pthread_t pBubbleThread; //Thread bubble
 	
 	int **matrix, i, j;//, mat[3][10] = {{5,3,2,8,9,7,1,6,4,10},{15,3,2,8,9,7,1,6,4,20},{25,3,2,8,9,7,1,6,4,30}};
-	uint32_t *times, t[3] = {0, 0, 0};
-	int success;
-	uint32_t clockTimer = 100; //Relógio compartilhado
+	uint64_t *times, t[3] = {UINT64_MAX, UINT64_MAX, UINT64_MAX}; //UINT64_MAX é inalcançável, e então serve como flag
+	int success, runSize = 2147483647/1000;
+	uint64_t clockTimer = 0; //Relógio compartilhado
 	
-	pthread_t *workers[3];
+	pthread_t *workers[8] = {NULL};
 	workers[0] = &pInsertionThread;
 	workers[1] = &pSelectionThread;
 	workers[2] = &pBubbleThread;
 	
 	srand(time(NULL));
 	matrix = (int **) malloc(3 * sizeof(int *));
-	times = (uint32_t *) malloc(3 * sizeof(uint32_t));;
+	times = (uint64_t *) malloc(3 * sizeof(uint64_t));;
 	for(i = 0; i < 3; i++) {
 		times[i] = t[i];
-		matrix[i] = (int *) malloc(10000 * sizeof(int));
-		for(j = 0; j < 10000; j++) {
+		matrix[i] = (int *) malloc(runSize * sizeof(int));
+		for(j = 0; j < runSize; j++) {
 			matrix[i][j] = rand() % 65535;//mat[i][j];
 		}
 	}
 	
 	/*
-	SortingInfo createStructSortingInfo(int *dataArrays, uint32_t size, uint32_t *time);
 
-	WorkerInfo createStructWorkerInfo(int **dataArrays, uint32_t **times, int algoIdentifier, uint32_t size);
-
-	ReporterInfo createReporterInfo(pthread_t **threads, WorkerInfo workersData, uint32_t *clock, uint32_t threadCount);
-
-	InterceptorInfo createInterceptorInfo(pthread_t **threads, uint32_t **times, uint32_t waiting);
 	*/
 	
-	workersData = createStructWorkerInfo((int **)matrix, times, &clockTimer, 1+2+4, /* valor fixo de teste */ 10000);
-	reportData = createReporterInfo(workers, workersData);
-	//interceptionData = createInterceptorInfo(workers, (uint32_t **)&times, 30000); //30 segundos é o tempo máximo
+	workersData = createWorkerInfo((int **)matrix, /* Estou usando vetor */ NULL, times, &clockTimer, /* localmente significa bubble, insertion e selection */ 1+2+4, /* valor fixo de teste */ runSize, /* rodar em paralelo */ true);
+	reportData = createReporterInfo(workers, workersData, true);
+	interceptionData = createInterceptorInfo(workers, times, /* 30 segundos de espera */ 1200);
 	
 	pthread_create(&pClockThread, NULL, clockThread, &clockTimer); //Sempe deve-se iniciar o relógio antes de qualquer outra thread
 	pthread_create(&pReportThread, NULL, reportThread, reportData);
-	//pthread_create(&pInterceptorThread, NULL, interceptorThread, interceptionData);
+	pthread_create(&pInterceptorThread, NULL, interceptorThread, interceptionData);
 	//Inicializando a estrutura de dados compartilhada:
 
 	//data.clock = &clockTimer;
@@ -329,12 +323,17 @@ int main(void) {
 
 	
 	success = pthread_join(pReportThread, NULL); //(void **)&success);
-	/**
+	pthread_cancel(pInterceptorThread);
+	/*
+	free(WorkerInfo ...)
+	free(ReporterInfo ...)
+	*/
+	/**/
 	if(success == 0) {
 		int i, j;
 		for(i = 0; i < 3; i++) {
-			printf("Algoritmo %d, tempo: %u\n", i, times[i]);
-			for(j = 0; j < 10000; j++) {
+			printf("Algoritmo %d, tempo: %llu\n", i, times[i]);
+			for(j = 0; j < (runSize <= 100 ? runSize : 100); j++) {
 				printf("%d ", matrix[i][j]);//
 			}
 			printf("\n\n");
