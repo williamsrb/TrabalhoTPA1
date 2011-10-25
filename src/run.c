@@ -5,6 +5,8 @@
 #include <time.h>
 #include <pthread.h>
 #include "threadUtils.h"
+#include "stringUtils.h"
+#include "fileUtils.h"
 #include "config.h"
 #include "params.h"
 #include "list.h"

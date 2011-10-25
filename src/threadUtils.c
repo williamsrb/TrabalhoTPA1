@@ -196,17 +196,17 @@ void *reportThread(void *arg) {
 	//Join
 	if(workerInfos->algoIdentifier & 1) { //Insertion
 		pthread_join(*(infos->threads[0]), (void **)retval);
-		printf("Relatório: Thread 0 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
+		//printf("Relatório: Thread 0 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
 	}
 	
 	if(workerInfos->algoIdentifier & 2) { //Selection
 		pthread_join(*(infos->threads[1]), (void **)retval);
-		printf("Relatório: Thread 1 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
+		//printf("Relatório: Thread 1 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
 	}
 	
 	if(workerInfos->algoIdentifier & 4) { //Bubble
 		pthread_join(*(infos->threads[2]),(void **)retval);
-		printf("Relatório: Thread 2 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
+		//printf("Relatório: Thread 2 terminou %s\n", (*retval == EXIT_SUCCESS) ? "com sucesso" : ((*retval == EXIT_FAILURE) ? "com falha" : ((*retval == (int)PTHREAD_CANCELED) ? "cancelada" : "em um estado indefinido")));
 	}
 	
 	
