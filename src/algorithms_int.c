@@ -3,8 +3,8 @@
 #include <limits.h>
 #include <string.h>
 #include <pthread.h>
-#include "threadUtils.h"
-#include "algorithms.h"
+#include "threadUtils_int.h"
+#include "algorithms_int.h"
 
 #include <stdio.h>
 
@@ -42,18 +42,18 @@ bool bubbleSort_int(int numbers[], int array_size) {
 }
 
 void *bubbleThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	if(bubbleSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(bubbleSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -89,18 +89,18 @@ bool insertionSort_int(int v[], int n) {
 }
 
 void *insertionThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	if(insertionSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(insertionSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -140,18 +140,18 @@ bool selectionSort_int(int num[], int tam) {
 }
 
 void *selectionThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	if(selectionSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(selectionSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -239,18 +239,18 @@ bool mergeSort_int(int *input, int size) {
 }
 
 void *mergeThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	//Inicio
-	if(mergeSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(mergeSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -311,18 +311,18 @@ bool heapSort_int(int numbers[], int array_size) {
 }
 
 void *heapThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	if(heapSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(heapSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -377,18 +377,18 @@ bool quickSort_int(int *data, int n) {
 }
 
 void *quickThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	//Inicio
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	if(quickSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(quickSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -446,18 +446,18 @@ bool radixSort_int(unsigned int *a, size_t size) {
 }
 
 void *radixThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	//Inicio
-	if(radixSort_int(*((unsigned int **)getSortingDataArray(info)), (size_t)(getSortingSize(info))) == false) {
+	if(radixSort_int(*((unsigned int **)getSorting_intDataArray(info)), (size_t)(getSorting_intSize(info))) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }
 
@@ -499,17 +499,17 @@ bool bucketSort_int(int array[], int n) {
 }
 
 void *bucketThread_int(void *arg) {
-	/* */ SortingInfo info = (SortingInfo)arg;
+	/* */ SortingInfo_int info = (SortingInfo_int)arg;
 	/* */ uint32_t start, end;
-	/* */ start = *(getSortingClock(info));
+	/* */ start = *(getSorting_intClock(info));
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	//Inicio
-	if(bucketSort_int(*(getSortingDataArray(info)), getSortingSize(info)) == false) {
+	if(bucketSort_int(*(getSorting_intDataArray(info)), getSorting_intSize(info)) == false) {
 		return ((void *) EXIT_FAILURE);
 	}
 	//Fim
-	/* */ end = *(getSortingClock(info));
-	/* */ *(getSortingTime(info)) = end - start;
+	/* */ end = *(getSorting_intClock(info));
+	/* */ *(getSorting_intTime(info)) = end - start;
 	return ((void *) EXIT_SUCCESS);
 }

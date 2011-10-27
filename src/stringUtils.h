@@ -2,6 +2,7 @@
 #define _STRINGUTILS_H
 
 #include <stdbool.h>
+#include <stdint.h>
 //Testa o tipo do caracter. Se for um dígito retorna true
 bool isDigit(char digit);
 
@@ -38,11 +39,11 @@ bool chrReplace(char *text, char oldkey, char newkey);
 //Conta as ocorrências de um determinado caracter numa string
 int chrCount(char *text, char key);
 
-//Lê uma sequência de caracteres de uma string, a partir de certo ponto, e para de ler na primeira ocorrência de um dado caracter, então retorna a posição onde encontrou o tal caracter
+//Lê uma sequência de caracteres de uma string, a partir de certo ponto, e para de ler na primeira ocorrência de um dado caracter, então retorna o tamanho da nova string
 //Cuidados: Aloca uma nova string, então lembre-se de desalocá-la quado não for mais usar
 //int getStringUntil(const char *text, char **foundString, int begin, char stopkey, int defaultEnd); //Versão bugada
 int getStringUntil(const char *text, char **resultstring, char searchkey, int maxlen);
 
 //Gera uma string aleatória, de tamanho também aleatório, dado o tamanho mínimo e máximo
-char *strRand(int min, int max, int seed);
+char *strRand(uint8_t min, uint8_t max, uint8_t seed);
 #endif

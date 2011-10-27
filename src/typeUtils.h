@@ -30,16 +30,16 @@ bool atob(const char *booltext, bool *newbool);
 int bitCounter(uint32_t integer);
 
 //Preenche um vetor de 'algoCount' vetores, de um tipo definido por parâmetro, com itens de uma lista concatenada com vírgulas
-bool fillValuesArray(char *concatValues, int algoCount, int **valuesPointers, int type);//int *valuesPointers[algoCount]
+void fillValuesArray(char *concatValues, int algoCount, int **valuesPointers, int type);//int *valuesPointers[algoCount]
 
 //Preenche um vetor de 'algoCount' listas, de um tipo definido por parâmetro, com itens de uma lista concatenada com vírgulas
-bool fillValuesList(char *concatValues, int algoCount, List *valuesPointers, int type);//List valuesPointers[algoCount]
+void fillValuesList(char *concatValues, int algoCount, List *valuesPointers, int type);//List valuesPointers[algoCount]
 
 //Preenche um vetor de 'algoCount' vetores, de um tipo definido por parâmetro, com itens gerados aleatoriamente, dados o intervalo e a quantidade de valores a serem gerados
-bool fillArrayRand(int **valuesPointers, int algoCount, int type, int begin, int end, int size);
+void fillArrayRand(int **valuesPointers, int algoCount, int type, int begin, int end, int size);
 
 //Preenche um vetor de 'algoCount' listas, de um tipo definido por parâmetro, com itens gerados aleatoriamente, dados o intervalo e a quantidade de valores a serem gerados
-bool fillListRand(List *valuesPointers, int algoCount, int type, int begin, int end, int size);
+void fillListRand(List *valuesPointers, int algoCount, int type, int begin, int end, int size);
 
 //Gera um float aleatório, a partir de um inteiro num intervalo definido, dado uma semente
 //Cuidados: Usar srand() antes
@@ -47,22 +47,22 @@ float floatRand(int begin, int end, float seed);
 
 //Gera um int aleatório, num intervalo definido, dado uma semente
 //Cuidados: Usar srand() antes
-int intRand(int begin, int end, float seed);
+int intRand(int begin, int end, int seed);
 
 //Transforma um ponteiro escondido num int em um int verdadeiro, que é o valor apontado
-int getIntPointedValue(int hiddenPointer);
+int* getIntPointerValue(int hiddenPointer);
 
 //Esconde um int em um int que guarda o seu endereço
-int createHiddenIntPointer(int value);
+int createHiddenIntPointer(int *value);
 
 //Transforma um ponteiro escondido num int em um float, que é o valor apontado
-float getFloatPointedValue(int hiddenPointer);
+float* getFloatPointerValue(int hiddenPointer);
 
 //Esconde um float em um int que guarda o seu endereço
-int createHiddenFloatPointer(float value);
+int createHiddenFloatPointer(float *value);
 
 //Transforma um ponteiro escondido num int em uma string, que é o valor apontado
-char *getStringPointedValue(int hiddenPointer);
+char* getStringPointerValue(int hiddenPointer);
 
 //Esconde uma string em um int que guarda o seu endereço
 int createHiddenStringPointer(char *value);

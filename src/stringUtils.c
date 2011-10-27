@@ -1,7 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
 #include "stringUtils.h"
+#include <stdio.h>
 
 //Testa o tipo do caracter. Se for um dígito retorna true
 bool isDigit(char digit) {
@@ -140,8 +143,8 @@ int chrCount(char *text, char key) {
 int getStringUntil(const char *text, char **resultstring, char searchkey, int maxlen) {
 	int i = 0;
 
-	// Obs: quando encontra o '\0' aloca 1 byte a mais do que o necessário
-	// Se isso for problema, a correção é fácil, só não acho que compense
+//	 Obs: quando encontra o '\0' aloca 1 byte a mais do que o necessário
+//	 Se isso for problema, a correção é fácil, só não acho que compense
 	while (i < maxlen && text[i] != '\0' && text[i] != searchkey)
 		i++;
 
@@ -155,51 +158,83 @@ int getStringUntil(const char *text, char **resultstring, char searchkey, int ma
 }
 
 //Gera uma string aleatória, de tamanho também aleatório, dado o tamanho mínimo e máximo
-char *strRand(int min, int max, int seed) {
-	return 0; //IMPLEMENTAR
-/*
-( rand() % 30 + 1985 ) is in the range 1985 to 2014
-( rand() % 2 ) 0 -> sub from max, 1 -> sum to min
-( rand() % (max-min) )
-( rand() % 3 ) 0 -> num, 1 -> maius, 2 -> minus
-( rand() % 10 + 48 ) '0' a '9'
-( rand() % 26 + 65 ) 'A' a 'Z'
-( rand() % 26 + 97 ) 'a' a 'b'
-*/
+//Cuidados: Aloca uma nova string, então lembre-se de desalocá-la quado não for mais usar
+#define nrand(n) ((int)(((int64_t)(rand() + seed)) % RAND_MAX)) //nrand() considera o seed na geração de um aleatório
+char *strRand(uint8_t min, uint8_t max, uint8_t seed) {
+	char *newString, loopChar;
+	int diff = max - min, size, i;
+	short type;
+	
+	if(diff < 0) {
+		newString = NULL;
+	} else {
+		size = nrand() % (diff+1) + min;
+		newString = (char *) malloc(size + 1);
+		for(i = 0; i < size; i++) {
+			type = nrand() % 3;
+			switch(type) {
+				case 0:
+					//number
+					loopChar = nrand() % 10 + 48; //'0' a '9'
+					break;
+				case 1:
+					//upper
+					loopChar = nrand() % 26 + 65; //'A' a 'Z'
+					break;
+				case 2:
+					//lower
+					loopChar = nrand() % 26 + 97; //'a' a 'b'
+					break;
+				//É possível adicionar outras faixas de caracteres
+			}
+			newString[i] = loopChar;
+		}
+		newString[i] = '\0';
+	}
+	return newString;
 }
 
 //////// TESTES ////////
-/**
-
-int main(int argc, char *argv[]) {
-	char vetor[] = "I like to move it.This is not my fault.I'm saying the truth.I can't believe in another thing.Another else these one";
-	char *str[5];
-	int i, tam;
-	
-	//index = getStringUntil(vetor, &achados[0], 0, '.', strlen(vetor));
-	//printf("%d -> %s\n", index, achados[0]);
-	
-	//if(index != 0) {
-	//	index = getStringUntil(vetor, &achados[1], index+1, '.', strlen(vetor));
-	//	printf("%d -> %s\n", index, achados[1]);
-	//	free(achados[2]);
-	//}
-	
-	//if(index != 0) {
-	//	index = getStringUntil(vetor, &achados[2], index+1, '.', strlen(vetor));
-	//	printf("%d -> %s\n", index, achados[2]);
-	//	free(achados[3]);
-	//}
-	
-	printf("Strlen: %d\n",tam = strlen(vetor));
-	printf ("%d ", i = getStringUntil(vetor, &str[0], '.', tam));
-	printf ("%d ", i += getStringUntil(&vetor[i], &str[1], '.', tam));
-	printf ("%d ", i += getStringUntil(&vetor[i], &str[2], '.', tam));
-	printf ("%d ", i += getStringUntil(&vetor[i], &str[3], '.', tam));
-	printf ("%d ", i += getStringUntil(&vetor[i], &str[4], '.', tam));
-	printf ("\n%s [l] %s [l] %s [l] %s [l] %s\n", str[0], str[1], str[2], str[3], str[4]);
-    return 0;
-}
+/**/
+//int main(int argc, char *argv[]) {
+//	char vetor[] = "I like to move it.This is not my fault.I'm saying the truth.I can't believe in another thing.Another else these one";
+//	char *str[5];
+//	int i, tam;
+//
+//	index = getStringUntil(vetor, &achados[0], 0, '.', strlen(vetor));
+//	printf("%d -> %s\n", index, achados[0]);
+//
+//	if(index != 0) {
+//		index = getStringUntil(vetor, &achados[1], index+1, '.', strlen(vetor));
+//		printf("%d -> %s\n", index, achados[1]);
+//		free(achados[2]);
+//	}
+//
+//	if(index != 0) {
+//		index = getStringUntil(vetor, &achados[2], index+1, '.', strlen(vetor));
+//		printf("%d -> %s\n", index, achados[2]);
+//		free(achados[3]);
+//	}
+//
+//	char *newStr;
+//	srand((unsigned)time(NULL));
+//	newStr = strRand(3, 10, i);
+//	printf("%s", newStr);
+//	for(i = 1; i < 10; i++) {
+//		newStr = strRand(3, 10, i);
+//		printf(", %s", newStr);
+//	}
+//	putchar('\n');
+//
+//	printf("Strlen: %d\n",tam = strlen(vetor));
+//	printf ("%d ", i = getStringUntil(vetor, &str[0], '.', tam));
+//	printf ("%d ", i += getStringUntil(&vetor[i], &str[1], '.', tam));
+//	printf ("%d ", i += getStringUntil(&vetor[i], &str[2], '.', tam));
+//	printf ("%d ", i += getStringUntil(&vetor[i], &str[3], '.', tam));
+//	printf ("%d ", i += getStringUntil(&vetor[i], &str[4], '.', tam));
+//	printf ("\n%s [l] %s [l] %s [l] %s [l] %s\n", str[0], str[1], str[2], str[3], str[4]);
+//    return 0;
+//}
 //*/
 
 /*
