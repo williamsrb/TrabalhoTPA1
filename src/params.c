@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "stringUtils.h"
 #include "fileUtils.h"
 #include "typeUtils.h"
@@ -10,69 +11,107 @@ struct param {
     char *data;
 };
 
-//Cria a quantidade de parâmetros desejados
-Param paramsCreate(int count) {
-	return NULL; //IMPLEMENTAR
+//Aloca 11 parâmetros
+Params paramsCreate() {
+	int i;
+	Params newParams = (Param *) malloc(11 * sizeof(Param));
+	while(i < 11) {
+		newParams[i] = (Param) malloc(sizeof(struct param));
+		i++;
+	}
 }
 
 //Verifica se a campo data foi usado, e consequentemente o parêmetro. O uso de valores padrões na função principal não altera o retorno de paramIsset()
-bool paramIsset(Param params, int index) {
-	return false; //IMPLEMENTAR
+bool paramIsset(Params params, int index) {
+	return (params[index]->data != NULL) ? true : false;
 }
 
 //Interpreta e armazena os parâmetros, assegurando que os ponteiros para dados de parâmetros não utilizados contenham NULL
-bool paramsFetch(int mainArgc, char *mainArgv[], Param params) {
+bool paramsFetch(int mainArgc, char *mainArgv[], Params params) {
 	return false; //IMPLEMENTAR
 }
 
 //Lê o arquivo de parâmetros e envia para paramsFetch() interpretar e validar, e depois usa a função paramsCheckConflitcts() para checar os conflitos. Se tudo der certo, retorna um sinal de sucesso
-bool paramsFileFetch(char *filePath, Param params) {
-	return false; //IMPLEMENTAR
+bool paramsFileFetch(char *filePath, Params params) {
+	bool success = true;
+	char *fileParams;//, **fileArgv;
+	int count, size, i = 0, pos = 0, get;
+	get = size = sizeOfFile(filePath, false);
+	if(size != 0) {
+		fileParams = (char *) malloc(size);
+		readFileLine(fileParams, filePath);
+		count = chrCount(fileParams, ' ') + 1 + 1; //o primeiro item do argv é o nome do executável
+		char *fileArgv[count]; // = (char **) malloc((count+1) * sizeof(char *));
+	
+		for(i = 1; (i < count) && (get != 0); i++) {
+			get = getStringUntil(&fileParams[pos], &fileArgv[i], ' ', size);
+			pos += get;
+		}
+	
+		if((paramsFetch(count, fileArgv, params) == ERROR) || (paramsCheckConflitcts(params, true) == INVALID)) {
+			success = false;
+		}
+		
+		//Para simular o argv real terei que abrir mão de desalocar as strings encontradas
+		//for(i = 0; i < count; i++) {
+		//	free(fileArgv[i]);
+		//}
+	} else {
+		success = false;
+	}
+	return success;
 }
 
 //Verifica se há conflitos entre os parâmetros, e se permitido exibe os erros na saída apropriada
-bool paramsCheckConflitcts(Param params, bool displayErrors) {
+bool paramsCheckConflitcts(Params params, bool displayErrors) {
 	return false; //IMPLEMENTAR
 }
 
 //Limpa a lista de parâmetros
-void paramsClear(Param params) {
-	return; //IMPLEMENTAR
+void paramsClear(Params params) {
+	int i;
+	while(i < 11) {
+		free(params[i]->data);
+		free(params[i]);
+		i++;
+	}
+	free(params);
+	return;
 }
 
 //Retorna um flag relevante para a aplicação principal, que depende do valor do parâmetro, do id e da posição do parâmetro na lista separada por virgulas de onde veio, se for o caso
-int paramsSwitchCase(Param params, int paramId, char *simplifiedData, int dataPos) {
+int paramsSwitchCase(Params params, int paramId, char *simplifiedData, int dataPos) {
 	return 0; //IMPLEMENTAR
 }
 
 //Retorna o id de um dado parâmetro
-int paramGetId(Param params, int index) {
-	return 0; //IMPLEMENTAR
+int paramGetId(Params params, int index) {
+	return params[index]->id;
 }
 
 //Retorna a soma de possíveis conflitos com um dado parâmetro
-int paramGetConflict(Param params, int index) {
-	return 0; //IMPLEMENTAR
+int paramGetConflict(Params params, int index) {
+	return params[index]->conflicts;
 }
 
 //Retorna os dados de um dado parâmetro
-char* paramGetData(Param params, int index) {
-	return NULL; //IMPLEMENTAR
+char* paramGetData(Params params, int index) {
+	return params[index]->data;
 }
 
 //Atribui um novo valor ao id de um dado parâmetro
-void paramSetId(Param params, int index, int newId) {
-	return; //IMPLEMENTAR
+void paramSetId(Params params, int index, int newId) {
+	params[index]->id = newId;
 }
 
 //Atribui um novo valor, em um dado parâmetro, representando a soma de possíveis conflitos com outros parâmetros
-void paramSetConflict(Param params, int index, int newConflitctSum) {
-	return; //IMPLEMENTAR
+void paramSetConflict(Params params, int index, int newConflitctSum) {
+	params[index]->conflicts = newConflitctSum;
 }
 
 //Atribui um novo valor à string de dados de um dado parâmetro
-void paramSetData(Param params, int index, char *newData) {
-	return; //IMPLEMENTAR
+void paramSetData(Params params, int index, char *newData) {
+	params[index]->data = newData;
 }
 
 //'Param' é um vetor de 'struct param's
@@ -97,6 +136,7 @@ OBS.: Square and round brackets are unnecessary
 //////// TESTES ////////
 /**
 int main(int argc, char *argv[]) {
+	paramsFileFetch("params.txt", NULL);
     return 0;
 }
 //*/

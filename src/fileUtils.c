@@ -88,6 +88,7 @@ long sizeOfFile(char *filename, bool isBinary) {
 			if (fstat(fd, &stbuf) != -1) {
 				file_size = stbuf.st_size;
 			}
+			fclose(pFile);
 		}
 	}
 	return file_size;

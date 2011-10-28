@@ -15,7 +15,7 @@
 //#define DEBUG printf("Arquivo: %s, Função: %s, Linha: %d\n", __FILE__, __func__, __LINE__)
 
 struct run_data {
-	Param params;
+	Params params;
 	
 	int algoIdentifier; //1(bubble), 2(insertion), 4(selection), 8(merge), 16(heap), 32(quick), 64(radix), 128(bucket)
 	int algoType; //1(int), 2(float), 3(string)
@@ -42,7 +42,8 @@ struct run_data {
 //Inicializador de dados
 void initRunData(struct run_data *mainData) {
 	int i = 0;
-	mainData->params = paramsCreate(11);
+	
+	mainData->params = paramsCreate();
 	
 	mainData->algoIdentifier = 0;
 	mainData->algoType = 0;
@@ -61,6 +62,7 @@ void initRunData(struct run_data *mainData) {
 	mainData->parallelRun = false;
 	
 	mainData->values = NULL;
+	i = 0;
 	while(i < 8) {
 		mainData->valuesPointers[i] = NULL;
 		i++;
@@ -79,10 +81,10 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 	bool flag = false;
 	char **aux, *pData;
 	int dataSize, index, i = 0, mallocStringCount = 0;
-	Param mainParams = mainData->params;
+	Params mainParams = mainData->params;
 	
-	if((flag = paramIsset(mainParams, /* Id: */ 16)) || fileExists(defaultStringParams[0])) { //Id:4 , Param:--fileParams=
-		mainData->fileParams = flag ? paramGetData(mainParams, 4) : defaultStringParams[0]; //Este número(4) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+	if((flag = paramIsset(mainParams, /* log₂16: */ 4)) || fileExists(defaultStringParams[0])) { //Id:16 , Param:--fileParams=, então o index é logaritmo de 16 na base 2
+		mainData->fileParams = flag ? paramGetData(mainParams, /* log₂16: */ 4) : defaultStringParams[0]; //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 		
 		if((isRecursive == false) && (paramsFileFetch(mainData->fileParams, mainData->params) == OK)) { //Caso o parâmetro não tenha sido setado pelo usuário, mas o arquivo default exista, então ele passa o arquivo default
 			populateRunDataUsingParams(mainData, defaultStringParams, true); //Informa que a chama é recursiva para a próxima execução, evitando que fileParams contenha fileParams
@@ -92,8 +94,8 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 		}
 	} else { //Então os parâmetros que poderiam conflitar serão lidos. Apesar da validação já ter ocorrido em paramsCheckConflitcts(), estou evitando 'if's irrelevantes
 		aux = (char **) malloc(5 * sizeof(char *));
-		if(paramIsset(mainParams, /* Id: */ 1)) { //Id:1 , Param:--algo=
-			pData = paramGetData(mainParams, 0); //Este número(0) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂1: */ 0)) { //Id:1 , Param:--algo=, então o index é logaritmo de 1 na base 2
+			pData = paramGetData(mainParams, /* log₂1: */ 0); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			dataSize = strlen(pData);
 			index = getStringUntil(pData, &aux[0], ',', dataSize); ++mallocStringCount; //algoIdentifier para aux[0] - Depois será necessário liberar a memória alocada pela função getStringUntil()
 			index += getStringUntil(&pData[index], &aux[1], ',', dataSize); ++mallocStringCount; //algoType para aux[1] - Depois será necessário liberar a memória alocada pela função getStringUntil()
@@ -104,22 +106,22 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 			mainData->algoType = ALGOTYPE;
 		}
 	
-		if(paramIsset(mainParams, /* Id: */ 2)) { //Id:2 , Param:--abortTime=
-			pData = paramGetData(mainParams, 1); //Este número(1) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂2: */ 1)) { //Id:2 , Param:--abortTime=, então o index é logaritmo de 2 na base 2
+			pData = paramGetData(mainParams, /* log₂2: */ 1); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			mainData->abortTime = paramsSwitchCase(mainParams, /* Id: */ 2, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
 		} else { //Então use o valor padrão
 			mainData->abortTime = ABORTTIME;
 		}
 	
-		if(paramIsset(mainParams, /* Id: */ 4)) { //Id:4 , Param:--orderBefore=
-			pData = paramGetData(mainParams, 2); //Este número(2) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂4: */ 2)) { //Id:4 , Param:--orderBefore=, então o index é logaritmo de 4 na base 2
+			pData = paramGetData(mainParams, /* log₂4: */ 2); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			mainData->orderBefore = paramsSwitchCase(mainParams, /* Id: */ 4, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
 		} else { //Então use o valor padrão
 			mainData->orderBefore = ORDERBEFORE;
 		}
 	
-		if(paramIsset(mainParams, /* Id: */ 8)) { //Id:8 , Param:--rand=
-			pData = paramGetData(mainParams, 3); //Este número(3) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂8: */ 3)) { //Id:8 , Param:--rand=, então o index é logaritmo de 8 na base 2
+			pData = paramGetData(mainParams, /* log₂8: */ 3); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			dataSize = strlen(pData);
 			index = getStringUntil(pData, &aux[2], ',', dataSize); ++mallocStringCount; //algoIdentifier para aux[2] - Depois será necessário liberar a memória alocada pela função getStringUntil()
 			index += getStringUntil(&pData[index], &aux[3], ',', dataSize); ++mallocStringCount; //algoType para aux[3] - Depois será necessário liberar a memória alocada pela função getStringUntil()
@@ -133,44 +135,44 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 			mainData->randEnd = RANDEND;
 		}
 		
-		if(paramIsset(mainParams, /* Id: */ 256)) { //Id:256 , Param:--useArrays=
-			pData = paramGetData(mainParams, 8); //Este número(8) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂256: */ 8)) { //Id:256 , Param:--useArrays=, então o index é logaritmo de 256 na base 2
+			pData = paramGetData(mainParams, /* log₂256: */ 8); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			mainData->useArrays = paramsSwitchCase(mainParams, /* Id: */ 256, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
 		} else { //Então use o valor padrão
 			mainData->useArrays = USEARRAYS;
 		}
 		
-		if(paramIsset(mainParams, /* Id: */ 512)) { //Id:512 , Param:--parallelRun=
-			pData = paramGetData(mainParams, 9); //Este número(9) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂512: */ 9)) { //Id:512 , Param:--parallelRun=, então o index é logaritmo de 512 na base 2
+			pData = paramGetData(mainParams, /* log₂512: */ 9); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			mainData->parallelRun = paramsSwitchCase(mainParams, /* Id: */ 512, pData, 0); //Como este parâmetro não tem dados divididos por vírgula, é possível pegá-lo diretamente pela variável pData
 		} else { //Então use o valor padrão
 			mainData->parallelRun = PARALLELRUN;
 		}
 		
-		if(paramIsset(mainParams, /* Id: */ 1024)) { //Id:1024 , Param:--values=
-			pData = paramGetData(mainParams, 10); //Este número(10) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+		if(paramIsset(mainParams, /* log₂1024: */ 10)) { //Id:1024 , Param:--values=, então o index é logaritmo de 1024 na base 2
+			pData = paramGetData(mainParams, /* log₂1024: */ 10); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 			mainData->values = pData;
 		} else { //Então use o valor padrão
 			mainData->values = defaultStringParams[4];
 		}
 	} //Daqui em diante os parâmetros não conflitam com fileParams
 	
-	if(paramIsset(mainParams, /* Id: */ 32)) { //Id:32 , Param:--inputFile=
-		pData = paramGetData(mainParams, 5); //Este número(5) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+	if(paramIsset(mainParams, /* log₂32: */ 5)) { //Id:32 , Param:--inputFile=, então o index é logaritmo de 32 na base 2
+		pData = paramGetData(mainParams, /* log₂32: */ 5); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 		mainData->inputFile = pData;
 	} else { //Então use o valor padrão
 		mainData->inputFile = defaultStringParams[1];
 	}
 	
-	if(paramIsset(mainParams, /* Id: */ 64)) { //Id:64 , Param:--gnuplotOutputFile=
-		pData = paramGetData(mainParams, 6); //Este número(6) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+	if(paramIsset(mainParams, /* log₂64: */ 6)) { //Id:64 , Param:--gnuplotOutputFile=, então o index é logaritmo de 64 na base 2
+		pData = paramGetData(mainParams, /* log₂64: */ 6); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 		mainData->gnuplotOutputFile = pData;
 	} else { //Então use o valor padrão
 		mainData->gnuplotOutputFile = defaultStringParams[2];
 	}
 	
-	if(paramIsset(mainParams, /* Id: */ 128)) { //Id:128 , Param:--extraReportFile=
-		pData = paramGetData(mainParams, 7); //Este número(7) não é um Id, apenas um índice, previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
+	if(paramIsset(mainParams, /* log₂128: */ 7)) { //Id:128 , Param:--extraReportFile=, então o index é logaritmo de 128 na base 2
+		pData = paramGetData(mainParams, /* log₂128: */ 7); //índice previamente planejado para seguir a ordem crescente dos Ids, no vetor de params[]
 		mainData->extraReportFile = pData;
 	} else { //Então use o valor padrão
 		mainData->extraReportFile = defaultStringParams[3];
@@ -182,7 +184,7 @@ void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringP
 	free(aux);
 }
 
-/**
+/**/
 //Programa principal
 int main(int argc, char *argv[]) {
 	struct run_data mainData;
@@ -191,7 +193,7 @@ int main(int argc, char *argv[]) {
 	char *defaultStringParams[] = {FILEPARAMS, INPUTFILE, GNUPLOTOUTPUTFILE, EXTRAREPORTFILE, VALUES}; //Por não ser recomendável usar macros com string, fixarei a referência na função principal
 	initRunData(&mainData);
 	
-	paramsFetch(argc, argv, mainData.params);
+	//paramsFetch(argc, argv, mainData.params);
 	if((paramsFetch(argc, argv, mainData.params) == ERROR) || (paramsCheckConflitcts(mainData.params, false) == INVALID)) {
 		fprintf(stderr, "Impossível continuar devido aos erros.\n");
 	} else {
@@ -199,7 +201,7 @@ int main(int argc, char *argv[]) {
 		//Checa se foram pedidos valores aleatórios. Caso não, então deve-se utilizar 'values'
 		//convertendo a massa de dados de string p/ tipo determinado e inserir nas estruturas definidas
 		algoCount = bitCounter(mainData.algoIdentifier);
-		if(paramIsset(mainData.params, 8) || (strlen(defaultStringParams[4]) == 0)) { //--rand= , Id: 8
+		if(paramIsset(mainData.params, 3) || (strlen(defaultStringParams[4]) == 0)) { //--rand= , Id: 8, então o index é logaritmo de 8 na base 2
 			if(mainData.useArrays == true) {
 				fillArrayRand(mainData.valuesPointers, algoCount, mainData.algoType, mainData.randBegin, mainData.randEnd, mainData.randSize);
 			} else {
@@ -274,8 +276,9 @@ int** runGetValuesPointers(t_run_data mainData) {	return mainData->valuesPointer
 List* runGetValuesPointersList(t_run_data mainData) {	return mainData->valuesPointersList;}
 
 //////////////////// TESTES ////////////////////////////
-/**/
-//int main(void) {
+/**
+int main(int argc, char *argv) {
+	printf("%d\n", argc);
 //	ReporterInfo reportData;
 //	InterceptorInfo interceptionData;
 //	WorkerInfo workersData;
@@ -341,6 +344,6 @@ List* runGetValuesPointersList(t_run_data mainData) {	return mainData->valuesPoi
 //	} else {
 //		printf("Algum erro!");
 //	}
-//	return 0;
-//}
+	return 0;
+}
 //*/
