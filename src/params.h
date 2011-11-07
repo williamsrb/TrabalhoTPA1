@@ -18,13 +18,13 @@ int paramGetId(Params params, int index);
 int paramGetConflict(Params params, int index);
 
 //Retorna os dados de um dado parâmetro
-char* paramGetData(Params params, int index);
+ConstStaticString paramGetData(Params params, int index);
 
 //Interpreta e armazena os parâmetros, assegurando que os ponteiros para dados de parâmetros não utilizados contenham NULL
 bool paramsFetch(int mainArgc, char *mainArgv[], Params params);
 
 //Lê o arquivo de parâmetros e envia para paramsFetch() interpretar e validar, e depois usa a função paramsCheckConflitcts() para checar os conflitos. Se tudo der certo, retorna um sinal de sucesso
-bool paramsFileFetch(char *filePath, Params params);
+bool paramsFileFetch(ConstStaticString filePath, Params params);
 
 //Verifica se há conflitos entre os parâmetros, e se permitido exibe os erros na saída apropriada
 bool paramsCheckConflitcts(Params params, bool displayErrors);
@@ -33,5 +33,5 @@ bool paramsCheckConflitcts(Params params, bool displayErrors);
 void paramsClear(Params params);
 
 //Retorna um flag relevante para a aplicação principal, que depende do valor do parâmetro, do id e da posição do parâmetro na lista separada por virgulas de onde veio, se for o caso
-int paramsSwitchCase(Params params, int paramId, char *simplifiedData, int dataPos);
+int paramsSwitchCase(Params params, int paramId, ConstStaticString simplifiedData, int dataPos);
 #endif

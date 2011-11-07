@@ -9,7 +9,7 @@
 #include "list.h"
 
 //Verifica se a string é convertível para int
-bool isStrInt(const char *text, bool acceptNegative) {
+bool isStrInt(ConstStaticString text, bool acceptNegative) {
 	bool result = true;
 	int size, count = 0;
 	
@@ -29,7 +29,7 @@ bool isStrInt(const char *text, bool acceptNegative) {
 }
 
 //Verifica se a string é convertível para float. Aceita inteiros.
-bool isStrFloat(const char *text, bool acceptNegative) {
+bool isStrFloat(ConstStaticString text, bool acceptNegative) {
 	bool result = true;
 	int size, count = 0;
 	bool dotFound = false;
@@ -62,10 +62,10 @@ bool isStrFloat(const char *text, bool acceptNegative) {
 }
 
 //Verifica se a string é convertível para bool
-bool isStrBool(const char *text) {
+bool isStrBool(ConstStaticString text) {
 	bool result;
 	int size, count = 0;
-	char *copy_FREEIT = NULL;
+	String copy_FREEIT = NULL;
 	
 	size = (text != NULL) ? strlen(text) : 0;
 	if(size < 1) {
@@ -74,7 +74,7 @@ bool isStrBool(const char *text) {
 		if(size == 1) {
 			result = isBoolChar(text[count]); //Se tiver um caracter, este terá que representar um valor lógico
 		} else {
-			copy_FREEIT = (char*) malloc(size + 1); //Espaço para o '\0'
+			copy_FREEIT = (String) malloc(size + 1); //Espaço para o '\0'
 			strcpy(copy_FREEIT, text);
 			strToUpper(copy_FREEIT);
 			result = ((strcmp(copy_FREEIT, "TRUE") == 0) || (strcmp(copy_FREEIT, "FALSE") == 0) || (strcmp(copy_FREEIT, "YES") == 0) || (strcmp(copy_FREEIT, "NO") == 0) || (strcmp(copy_FREEIT, "SIM") == 0) || (strcmp(copy_FREEIT, "NAO") == 0) || (strcmp(copy_FREEIT, "VERDADEIRO") == 0) || (strcmp(copy_FREEIT, "FALSO") == 0)); //Não usarei NÃO como chave pois é difícil tratar isso em C
@@ -85,7 +85,7 @@ bool isStrBool(const char *text) {
 }
 
 //Deve ser usada para saber se vale à pena continuar testando outros tipos
-bool isObviouslyString(const char *text) {
+bool isObviouslyString(ConstStaticString text) {
 	int size;
 	
 	size = (text != NULL) ? strlen(text) : 0;
@@ -100,7 +100,7 @@ bool isBoolChar(char flag) {
 
 //Testa o tipo do parâmetro e retorna o valor correspondente:
 //Tipos: 1 - Int, 2 - Float, 3 - Bool, 4 - String, 0 - Erro
-int getType(char *string) {
+int getType(ConstStaticString string) {
 	int result = 0;
 	if(string != NULL) {
 		if(!isObviouslyString(string)) {
@@ -121,9 +121,9 @@ int getType(char *string) {
 }
 
 //Converte uma string em booleano(newbool), retornando se a conversão foi bem sucedida
-bool atob(const char *booltext, bool *newbool) {
+bool atob(ConstStaticString booltext, bool *newbool) {
 	bool result = true;
-	char *copy_FREEIT;
+	String copy_FREEIT;
 	
 	copy_FREEIT = (char*) malloc(strlen(booltext) + 1); //Espaço para o '\0'
 	strcpy(copy_FREEIT, booltext);
@@ -165,10 +165,10 @@ void printArray(int arr[], int sz) {
 
 //Função genérica para preenchimento de um vetor de valores de um dado tipo, a partir de uma lista concatenada separada por vírgulas.
 //Visível localmente apenas(static)
-static void fillValuesPointers(char *concatValues, int algoCount, int **valuesPointersArray, List *valuesPointersList, int type) {
+static void fillValuesPointers(ConstStaticString concatValues, int algoCount, int **valuesPointersArray, List *valuesPointersList, int type) {
 	int *newInt, localInt, i = 0, j = 0, pos = 0, get, arrsize = chrCount(concatValues, ',') + 1, strsize = strlen(concatValues);
 	float *newFloat, localFloat;
-	char *varchar, *newString;
+	String varchar, newString;
 	bool success = true;
 	get = strsize;
 	if((strsize >= 1) && ((type == 1) || (type == 2) || (type == 3)) && ((valuesPointersArray != NULL) || (valuesPointersList != NULL)) && (concatValues != NULL) && (algoCount > 0) && (algoCount < 9)) {
@@ -220,7 +220,7 @@ static void fillValuesPointers(char *concatValues, int algoCount, int **valuesPo
 					case 3: //String
 						if(strlen(varchar) > 0) { //Os dados já foram validados, mas deve-se conferir para desencargo de consciência
 							for(i = 0; i < algoCount; i++) {
-								newString = (char *) malloc(get + 1);
+								newString = (String) malloc(get + 1);
 								strcpy(newString, varchar);
 								if(valuesPointersArray != NULL) {
 									valuesPointersArray[i][j] = createHiddenStringPointer(newString);
@@ -251,13 +251,13 @@ static void fillValuesPointers(char *concatValues, int algoCount, int **valuesPo
 
 //Preenche um vetor de 'algoCount' vetores, de um tipo definido por parâmetro, com itens de uma lista concatenada com vírgulas. Se quiser usar lista basta enviar o campo array como NULL e usar uma lista válida em "valuesPointersList".
 //Cuidados: Aloca um novo vetor de um dado tipo, então lembre-se de desalocá-los quado não for mais usar. Utilizar uma lista não validada pode causa um comportamento inesperado na função.
-void fillValuesArray(char *concatValues, int algoCount, int **valuesPointers, int type) {
+void fillValuesArray(ConstStaticString concatValues, int algoCount, int **valuesPointers, int type) {
 	fillValuesPointers(concatValues, algoCount, valuesPointers, NULL, type);
 }
 
 //Preenche um vetor de 'algoCount' listas, de um tipo definido por parâmetro, com itens de uma lista concatenada com vírgulas
 //Cuidados: Aloca uma nova lista de ponteiros e um vetor de um dado tipo, então lembre-se de desalocá-los quado não for mais usar
-void fillValuesList(char *concatValues, int algoCount, List *valuesPointers, int type) {
+void fillValuesList(ConstStaticString concatValues, int algoCount, List *valuesPointers, int type) {
 	fillValuesPointers(concatValues, algoCount, NULL, valuesPointers, type);
 }
 
@@ -266,7 +266,7 @@ void fillValuesList(char *concatValues, int algoCount, List *valuesPointers, int
 static void fillPointersRand(int **valuesPointersArray, List *valuesPointersList, int algoCount, int type, int begin, int end, int size) {
 	int *newInt, localInt, i = 0, j = 0, stringSize;
 	float *newFloat, localFloat;
-	char *newString, *localString;
+	String newString, localString;
 	bool success = true;
 	if(((type == 1) || (type == 2) || (type == 3)) && (begin <= end) && (size <= CONFIG_QUOTA) && ((valuesPointersArray != NULL) || (valuesPointersList != NULL)) && (algoCount > 0) && (algoCount < 9)) {
 		if(valuesPointersArray != NULL) {
@@ -305,7 +305,7 @@ static void fillPointersRand(int **valuesPointersArray, List *valuesPointersList
 					localString = strRand((uint8_t) begin, (uint8_t) end, (uint8_t) j);
 					stringSize = strlen(localString);
 					for(i = 0; i < algoCount; i++) {
-						newString = (char *) malloc(stringSize + 1);
+						newString = (String) malloc(stringSize + 1);
 						strcpy(newString, localString);
 						if(valuesPointersArray != NULL) {
 							valuesPointersArray[i][j] = createHiddenStringPointer(newString);
@@ -374,12 +374,12 @@ int createHiddenFloatPointer(float *value) {
 }
 
 //Transforma um ponteiro escondido num int em uma string, que é o valor apontado
-char* getStringPointerValue(int hiddenPointer) {
-	return (char *) hiddenPointer;
+ConstStaticString getStringPointerValue(int hiddenPointer) {
+	return (ConstStaticString) hiddenPointer;
 }
 
 //Esconde uma string em um int que guarda o seu endereço
-int createHiddenStringPointer(char *value) {
+int createHiddenStringPointer(ConstStaticString value) {
 	return (int) value;
 }
 

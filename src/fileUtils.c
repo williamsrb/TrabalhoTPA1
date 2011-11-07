@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include "typeUtils.h"
 //#include <sys/stat.h>//Habilitar caso não compile sem
 
 //Lê uma linha(Unix style) de um arquivo e copia para a string informada
-bool readFileLine(char *text, char *filename) {
+bool readFileLine(ConstPointerString text, ConstStaticString filename) {
 	FILE *pFile;
 	int ch, count = 0;
 	bool result, valid;
@@ -29,7 +30,7 @@ bool readFileLine(char *text, char *filename) {
 }
 
 //Escreve uma string, seguida de um pulo de linha(Unix style), em um arquivo
-bool writeFileLine(char *text, char *filename) {
+bool writeFileLine(ConstStaticString text, ConstStaticString filename) {
 	FILE *pFile;
 	bool result;
 	
@@ -44,7 +45,7 @@ bool writeFileLine(char *text, char *filename) {
 }
 
 //Escreve uma sequências de bytes no arquivo especificado
-bool writeBinFile(const void *datastruct, size_t typesize, size_t count, char *filename) {
+bool writeBinFile(const void *datastruct, size_t typesize, size_t count, ConstStaticString filename) {
 	FILE *pFile;
 	bool result;
 	
@@ -60,7 +61,7 @@ bool writeBinFile(const void *datastruct, size_t typesize, size_t count, char *f
 
 //Lê uma sequências de bytes do arquivo especificado
 //Cuidados: Deve ser usado em conjunto com 'sizeOfBinFile'
-bool readBinFile(void *datastruct, size_t typesize, size_t filesize, char *filename) {
+bool readBinFile(void *datastruct, size_t typesize, size_t filesize, ConstStaticString filename) {
 	FILE *pFile;
 	bool result;
 	
@@ -75,7 +76,7 @@ bool readBinFile(void *datastruct, size_t typesize, size_t filesize, char *filen
 }
 
 //Calcula o tamanho de um arquivo texto ou binário
-long sizeOfFile(char *filename, bool isBinary) {
+long sizeOfFile(ConstStaticString filename, bool isBinary) {
 	FILE *pFile;
 	long file_size = 0;
 	struct stat stbuf;
@@ -95,7 +96,7 @@ long sizeOfFile(char *filename, bool isBinary) {
 }
 
 //Verifica se um arquivo existe
-bool fileExists(const char * filename) {
+bool fileExists(ConstStaticString filename) {
 	bool result = false;
 	FILE * pFile = fopen(filename, "r");
 	if(pFile != NULL) {

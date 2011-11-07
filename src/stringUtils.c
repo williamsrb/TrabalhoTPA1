@@ -12,7 +12,7 @@ bool isDigit(char digit) {
 }
 
 //Testa se uma string inicia com uma dada chave
-bool startsWith(const char *text, const char *key) {
+bool startsWith(ConstStaticString text, ConstStaticString key) {
 	char *mark = strstr(text, key);
 	bool result = false;
 	if(mark != NULL) {
@@ -22,7 +22,7 @@ bool startsWith(const char *text, const char *key) {
 }
 
 //Inicializa um vetor de strings com NULLs em cada posição
-void nullStringArray(char *string[], int size) {
+void nullStringArray(ConstValueString string[], int size) {
 	int count = 0;
 	while(count < size) {
 		string[count] = NULL;
@@ -31,10 +31,10 @@ void nullStringArray(char *string[], int size) {
 }
 
 //Desaloca e limpa um vetor de strings
-void freeStringArray(char *string[], int size) {
+void freeStringArray(ConstValueString string[], int size) {
 	int count = 0;
 	while(count < size) {
-		free(string[count]);
+		free((void *)string[count]);
 		string[count] = NULL;
 		count++;
 	}
@@ -42,7 +42,7 @@ void freeStringArray(char *string[], int size) {
 
 //Altera a string original, transformando letras minúsculas em maiúsculas.
 //Cuidados: Usar caracteres ASCII simples. Não usar com constantes.
-void strToUpper(char *text) {
+void strToUpper(ConstPointerString text) {
 	int count = 0;
 	char step = 'a' - 'A';
 	if(text != NULL) {
@@ -55,7 +55,7 @@ void strToUpper(char *text) {
 
 //Altera a string original, transformando letras maiúsculas em minúsculas.
 //Cuidados: Usar caracteres ASCII simples. Não usar com constantes.
-void strToLower(char *text) {
+void strToLower(ConstPointerString text) {
 	int count = 0;
 	char step = 'a' - 'A';
 	if(text != NULL) {
@@ -67,15 +67,15 @@ void strToLower(char *text) {
 }
 
 //Retorna a posição da primeira ocorrência de uma chave em um texto
-int strPos(const char *text, const char *key) {
-	char *found = strstr(text, key);
+int strPos(ConstStaticString text, ConstStaticString key) {
+	ConstStaticString found = strstr(text, key);
 	if(found != NULL)
 		return found - text;
 	return -1; //Não encontrado
 }
 
 //Preenche uma string com um dado caracter de ponto a outro
-void fillWith(char *text, char filler, int start, int end) {
+void fillWith(ConstPointerString text, char filler, int start, int end) {
 	while(start < end) {
 		text[start] = filler;
 		start++;
@@ -85,8 +85,8 @@ void fillWith(char *text, char filler, int start, int end) {
 
 //Usa strncpy para substituir um trecho de uma string por outro, preechendo as diferenças de tamanho com espaços
 //AVISO: strncpy preenche as diferenças de espaços com '\0', por isso o uso de espaços para sanar o problema
-bool strReplace(char *text, char *oldkey, char *newkey) {
- 	char *found, *filler;
+bool strReplace(ConstPointerString text, ConstStaticString oldkey, ConstStaticString newkey) {
+ 	String found, filler;
  	int oldkeysize, newkeysize, textsize, count;
  	bool result;
  	
@@ -98,7 +98,7 @@ bool strReplace(char *text, char *oldkey, char *newkey) {
  		result = false;
  	} else {
  		if(oldkeysize > newkeysize) {
- 			filler = (char *) malloc(oldkeysize + 1);
+ 			filler = (String) malloc(oldkeysize + 1);
  			strcpy(filler, newkey);
  			fillWith(filler, ' ', newkeysize, oldkeysize); //Preenche a diferença entre as duas strings com espaço
  			strncpy(found, filler, oldkeysize);
@@ -112,7 +112,7 @@ bool strReplace(char *text, char *oldkey, char *newkey) {
 }
 
 //Substitui um caracter por outro dentro de uma string
-bool chrReplace(char *text, char oldkey, char newkey) {
+bool chrReplace(ConstPointerString text, char oldkey, char newkey) {
  	bool result;
  	int size, count = 0;
  	size = strlen(text);
@@ -126,7 +126,7 @@ bool chrReplace(char *text, char oldkey, char newkey) {
 }
 
 //Conta as ocorrências de um determinado caracter numa string
-int chrCount(char *text, char key) {
+int chrCount(ConstStaticString text, char key) {
  	int size, iter = 0, count = 0;
  	size = strlen(text);
  	while(iter < size) {
@@ -140,7 +140,7 @@ int chrCount(char *text, char key) {
 
 //Lê uma sequência de caracteres de uma string, a partir de certo ponto, e para de ler na primeira ocorrência de um dado caracter, então retorna o tamanho da nova string
 //Cuidados: Aloca uma nova string, então lembre-se de desalocá-la quado não for mais usar
-int getStringUntil(const char *text, char **resultstring, char searchkey, int maxlen) {
+int getStringUntil(ConstStaticString text, String *resultstring, char searchkey, int maxlen) {
 	int i = 0;
 
 //	 Obs: quando encontra o '\0' aloca 1 byte a mais do que o necessário
@@ -148,7 +148,7 @@ int getStringUntil(const char *text, char **resultstring, char searchkey, int ma
 	while (i < maxlen && text[i] != '\0' && text[i] != searchkey)
 		i++;
 
-	if(*resultstring = (char *) malloc(i + 1)) {
+	if(*resultstring = (String) malloc(i + 1)) {
 		strncpy(*resultstring, text, i);
 		(*resultstring)[i] = '\0';
 		return i+1;
@@ -160,7 +160,7 @@ int getStringUntil(const char *text, char **resultstring, char searchkey, int ma
 //Gera uma string aleatória, de tamanho também aleatório, dado o tamanho mínimo e máximo
 //Cuidados: Aloca uma nova string, então lembre-se de desalocá-la quado não for mais usar
 #define nrand(n) ((int)(((int64_t)(rand() + seed)) % RAND_MAX)) //nrand() considera o seed na geração de um aleatório
-char *strRand(uint8_t min, uint8_t max, uint8_t seed) {
+String strRand(uint8_t min, uint8_t max, uint8_t seed) {
 	char *newString, loopChar;
 	int diff = max - min, size, i;
 	short type;

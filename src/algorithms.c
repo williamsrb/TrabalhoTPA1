@@ -175,15 +175,14 @@ void *selectionThread(void *arg) {
 
 //http://www.cprogramming.com/tutorial/computersciencetheory/merge.html
 /* Helper function for finding the min of two numbers */
-inline int min(int a, int b)
+static inline int min(int a, int b)
 {
   return (a < b) ? a : b;
 }
 
 /* left is the index of the leftmost element of the subarray; right is one
  * past the index of the rightmost element */
-void mergeHelper(int *input, int left, int right, int *scratch)
-{
+static void mergeHelper(int *input, int left, int right, int *scratch) {
     /* base case: one element */
     if(right == left + 1) {
         return;
@@ -199,27 +198,22 @@ void mergeHelper(int *input, int left, int right, int *scratch)
         mergeHelper(input, left + midpoint_distance, right, scratch);
 
         /* merge the arrays together using scratch for temporary storage */ 
-        for(i = 0; i < length; i++)
-        {
+        for(i = 0; i < length; i++) {
             /* Check to see if any elements remain in the left array; if so,
              * we check if there are any elements left in the right array; if
              * so, we compare them.  Otherwise, we know that the merge must
              * use take the element from the left array */
             if(l < left + midpoint_distance && 
-                    (r == right || min(input[l], input[r]) == input[l]))
-            {
+                    (r == right || min(input[l], input[r]) == input[l])) {
                 scratch[i] = input[l];
                 l++;
-            }
-            else
-            {
+            } else {
                 scratch[i] = input[r];
                 r++;
             }
         }
         /* Copy the sorted subarray back to the input */
-        for(i = left; i < right; i++)
-        {
+        for(i = left; i < right; i++) {
             input[i] = scratch[i - left];
         }
     }
@@ -275,7 +269,7 @@ void *mergeThread(void *arg) {
 //
 
 //http://www.algorithmist.com/index.php/Heap_sort.c
-void siftDown(int numbers[], int root, int bottom) {
+static void siftDown(int numbers[], int root, int bottom) {
 	int done, maxChild, temp;
 
 	done = 0;
@@ -348,7 +342,7 @@ void *heapThread(void *arg) {
 //
 
 //http://www.algorithmist.com/index.php/Quicksort.c 
-void quickSortWorker(int *data, int N) {
+static void quickSortWorker(int *data, int N) {
 	int i, j;
 	int v, t;
 

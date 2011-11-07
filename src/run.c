@@ -25,15 +25,15 @@ struct run_data {
 	int randBegin; //INT_MIN ~ INT_MAX, > randEnd
 	int randEnd; //INT_MIN ~ INT_MAX, < randBegin
 	
-	char *fileParams; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
-	char *inputFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
-	char *gnuplotOutputFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
-	char *extraReportFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
+	ConstValueString fileParams; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
+	ConstValueString inputFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
+	ConstValueString gnuplotOutputFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
+	ConstValueString extraReportFile; //Valid filesystem path - For memory optimization purposes, will contain pointer to 'argv' relevant part
 	
 	bool useArrays;
 	bool parallelRun;
 	
-	char *values; //Comma-separated values - For memory optimization purposes, will contain pointer to 'argv' relevant part
+	ConstValueString values; //Comma-separated values - For memory optimization purposes, will contain pointer to 'argv' relevant part
 	int *valuesPointers[8]; //A int type array for each algorithm - Will be filled and used depending on algoType and useArrays
 	List valuesPointersList[6]; //A int type list for each algorithm - Will be filled and used depending on algoType and useArrays
 };
@@ -77,9 +77,10 @@ void initRunData(struct run_data *mainData) {
 //Private
 //Preenche a estrutura local com valores dos parâmetro já interpretados, e preenchendo os parâmetros não informados com valores padrões.
 //Não preenche os vetores ou listas de valores
-void populateRunDataUsingParams(struct run_data *mainData, char **defaultStringParams, bool isRecursive) {
+void populateRunDataUsingParams(struct run_data *mainData, ConstStaticString defaultStringParams[], bool isRecursive) {
 	bool flag = false;
-	char **aux, *pData;
+	ConstValueString pData;
+	String *aux;
 	int dataSize, index, i = 0, mallocStringCount = 0;
 	Params mainParams = mainData->params;
 	
@@ -190,7 +191,7 @@ int main(int argc, char *argv[]) {
 	struct run_data mainData;
 	bool success;//??
 	int algoCount;
-	char *defaultStringParams[] = {FILEPARAMS, INPUTFILE, GNUPLOTOUTPUTFILE, EXTRAREPORTFILE, VALUES}; //Por não ser recomendável usar macros com string, fixarei a referência na função principal
+	ConstStaticString defaultStringParams[] = {FILEPARAMS, INPUTFILE, GNUPLOTOUTPUTFILE, EXTRAREPORTFILE, VALUES}; //Por não ser recomendável usar macros com string, fixarei a referência na função principal
 	initRunData(&mainData);
 	
 	//paramsFetch(argc, argv, mainData.params);
@@ -249,16 +250,16 @@ int runGetRandBegin(t_run_data mainData) {	return mainData->randBegin;}
 int runGetRandEnd(t_run_data mainData) {	return mainData->randEnd;}
 
 //Public
-char* runGetFileParams(t_run_data mainData) {	return mainData->fileParams;}
+ConstStaticString runGetFileParams(t_run_data mainData) {	return mainData->fileParams;}
 
 //Public
-char* runGetInputFile(t_run_data mainData) {	return mainData->inputFile;}
+ConstStaticString runGetInputFile(t_run_data mainData) {	return mainData->inputFile;}
 
 //Public
-char* runGetGnuplotOutputFile(t_run_data mainData) {	return mainData->gnuplotOutputFile;}
+ConstStaticString runGetGnuplotOutputFile(t_run_data mainData) {	return mainData->gnuplotOutputFile;}
 
 //Public
-char* runGetExtraReportFile(t_run_data mainData) {	return mainData->extraReportFile;}
+ConstStaticString runGetExtraReportFile(t_run_data mainData) {	return mainData->extraReportFile;}
 
 //Public
 bool runGetUseArrays(t_run_data mainData) {	return mainData->useArrays;}
@@ -267,7 +268,7 @@ bool runGetUseArrays(t_run_data mainData) {	return mainData->useArrays;}
 bool runGetUseThreads(t_run_data mainData) {	return mainData->parallelRun;}
 
 //Public
-char* runGetValues(t_run_data mainData) {	return mainData->values;}
+ConstStaticString runGetValues(t_run_data mainData) {	return mainData->values;}
 
 //Public
 int** runGetValuesPointers(t_run_data mainData) {	return mainData->valuesPointers;}
@@ -276,9 +277,9 @@ int** runGetValuesPointers(t_run_data mainData) {	return mainData->valuesPointer
 List* runGetValuesPointersList(t_run_data mainData) {	return mainData->valuesPointersList;}
 
 //////////////////// TESTES ////////////////////////////
-/**
-int main(int argc, char *argv) {
-	printf("%d\n", argc);
+/**/
+//int main(int argc, char *argv) {
+//	printf("%d\n", argc);
 //	ReporterInfo reportData;
 //	InterceptorInfo interceptionData;
 //	WorkerInfo workersData;
@@ -344,6 +345,6 @@ int main(int argc, char *argv) {
 //	} else {
 //		printf("Algum erro!");
 //	}
-	return 0;
-}
+//	return 0;
+//}
 //*/

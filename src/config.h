@@ -6,6 +6,7 @@
 
 #include <stdbool.h>
 #include "list.h"
+#include "typeUtils.h"
 
 typedef struct run_data *t_run_data;
 
@@ -55,19 +56,19 @@ int runGetRandBegin(t_run_data mainData);
 
 int runGetRandEnd(t_run_data mainData);
 
-char* runGetFileParams(t_run_data mainData);
+ConstStaticString runGetFileParams(t_run_data mainData);
 
-char* runGetInputFile(t_run_data mainData);
+ConstStaticString runGetInputFile(t_run_data mainData);
 
-char* runGetGnuplotOutputFile(t_run_data mainData);
+ConstStaticString runGetGnuplotOutputFile(t_run_data mainData);
 
-char* runGetExtraReportFile(t_run_data mainData);
+ConstStaticString runGetExtraReportFile(t_run_data mainData);
 
 bool runGetUseArrays(t_run_data mainData);
 
 bool runGetUseThreads(t_run_data mainData);
 
-char* runGetValues(t_run_data mainData);
+ConstStaticString runGetValues(t_run_data mainData);
 
 int** runGetValuesPointers(t_run_data mainData);
 
